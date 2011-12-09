@@ -61,6 +61,14 @@ public:
         return m_content.clear();
     }
 
+    virtual T* back() {
+	return m_content.back();
+    }
+
+    virtual void pop_back() {
+	m_content.pop_back();
+    }
+
     virtual ~EListImpl()
     {
     }
@@ -136,13 +144,14 @@ protected:
     {
         static inline void free_all(std::vector< Q* >& _v)
         {
-            for (size_t i = 0; i < _v.size(); i++)
-                delete _v[i];
+	    // do not delete anything.
+            //for (size_t i = 0; i < _v.size(); i++)
+            //    delete _v[i];
         }
 
         static inline void free(Q* _p)
         {
-            delete _p;
+            //delete _p;
         }
     };
 

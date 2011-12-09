@@ -69,6 +69,14 @@ public:
 
     virtual void clear() = 0;
 
+    virtual T* back() {
+    	throw "EList.hpp : not implemented";
+    }
+
+    virtual void pop_back() {
+    	throw "EList.hpp : not implemented";
+    }
+
     /**
      * Permite tratar a una EList< T > como una EList< Q >
      */
