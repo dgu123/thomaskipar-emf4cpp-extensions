@@ -296,6 +296,8 @@ void handler::resolveReferences()
         EObject_ptr const& eobj = ref.eobject;
         EClass_ptr const& eclass = ref.eclass;
 
+	std::vector< EObject_ptr > resolvedRefs;
+
         try
         {
             DEBUG_MSG(cout, "--- Resolving reference " << xpath << " from "
@@ -386,15 +388,24 @@ void handler::resolveReferences()
 
                             _current = (*_collection)[_index];
                         }
-                        else
+                        else {
                             _current = any::any_cast< EObject_ptr >(_any);
+						}
                     }
                 }
 
                 // finally:
                 _any = _current;
-                eobj->eSet(esf, _any);
-            }
+                if (esf->getUpperBound() == 1) {
+                	eobj->eSet(esf, _any);
+                } else {
+                	EList_ptr allRefs = any::any_cast< EList_ptr >(eobj->eGet(esf));
+                	EObject_ptr eo = any::any_cast< EObject_ptr >(_any);
+                	allRefs->push_back(eo);
+                }
+        }
+
+
         } catch (const char* e)
         {
             ERROR_MSG("ERROR: " << e);
