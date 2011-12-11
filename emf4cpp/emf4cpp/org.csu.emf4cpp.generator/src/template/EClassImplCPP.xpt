@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 «EXTENSION template::Packages»
 «EXTENSION template::IDs»
 «EXTENSION template::Mapping»
+«EXTENSION template::Annotations»
 
 «DEFINE cpp FOR EClass»
 «FILE getFQN("/")+"Impl.cpp"-»
@@ -43,6 +44,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ecore/EReference.hpp>
 #include <ecore/EObject.hpp>
 #include <ecorecpp/mapping.hpp>
+
+«REM» Custom annotation defined by annotation«ENDREM»
+«FOREACH this.EOperations AS op»
+	«LET op.EAnnotations.selectFirst(e|e.source == op.annotationSource()) AS annotation»
+		«FOREACH annotation.findDetails("include") AS include»
+			#include "«include»"
+		«ENDFOREACH»«ENDLET»
+«ENDFOREACH»
 
 using namespace ::«EPackage.getFQN()»;
 
@@ -89,11 +98,17 @@ void «name»::_initialize()
 «FOREACH this.EOperations AS op»
 «op.getCPPSignature(name+"::")»
 {
-    «PROTECT CSTART '/*' CEND '*/' ID (name+"Impl_"+op.getIPPFileUniqueName()) DISABLE»
+	«IF op.EAnnotations.exists(e|e.source == op.annotationSource())»
+		«LET op.EAnnotations.selectFirst(e|e.source == op.annotationSource()) AS annotation»
+		«annotation.findDetails("body").first()»
+		«ENDLET»
+	«ELSE»
+		«PROTECT CSTART '/*' CEND '*/' ID (name+"Impl_"+op.getIPPFileUniqueName()) DISABLE»
     // Please, enable the protected region if you add manually written code.
     // To do this, add the keyword ENABLED before START.
     throw "UnsupportedOperationException: «op.getFQN()»";
-    «ENDPROTECT»
+   		«ENDPROTECT»
+   	«ENDIF»
 }
 «ENDFOREACH»
 
