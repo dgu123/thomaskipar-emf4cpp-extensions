@@ -19,6 +19,7 @@
 
 #include "serializer.hpp"
 #include <ecore.hpp>
+#include <fstream>
 #include "../util/debug.hpp"
 #include "../mapping.hpp"
 
@@ -27,11 +28,6 @@ using namespace ::ecore;
 
 serializer::serializer(std::ostream& _ostream) :
      m_out(_ostream), m_level(0), m_ser(m_out)
-{
-}
-
-serializer::serializer(const std::string& _file) :
-    m_out(_file.c_str()), m_level(0), m_ser(m_out)
 {
 }
 

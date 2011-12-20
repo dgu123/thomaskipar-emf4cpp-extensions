@@ -38,7 +38,6 @@ class serializer
 public:
 
     serializer(std::ostream& _ostream);
-    serializer(const std::string& _filen);
 
     virtual ~serializer();
 
