@@ -25,6 +25,7 @@
 #include "../mapping.hpp"
 #include "greedy_serializer.hpp"
 #include <ostream>
+#include <set>
 
 namespace ecorecpp
 {
@@ -55,6 +56,8 @@ protected:
 
     void create_node(::ecore::EObject_ptr parent_obj,
             ::ecore::EObject_ptr child_obj, ::ecore::EStructuralFeature_ptr ef);
+
+    ::std::set< ::ecore::EPackage_ptr > find_packages(::ecore::EObject_ptr obj) const;
 
     std::ostream& m_out;
 

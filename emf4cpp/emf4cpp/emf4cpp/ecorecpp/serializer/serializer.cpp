@@ -23,15 +23,12 @@
 #include "../util/debug.hpp"
 #include "../mapping.hpp"
 
-#include <iostream>
-
 using namespace ::ecorecpp::serializer;
 using namespace ::ecore;
 
 serializer::serializer(std::ostream& _ostream) :
      m_out(_ostream), m_level(0), m_ser(m_out)
 {
-	std::cout << " i'm the modified version here" << ::std::endl;
 }
 
 serializer::~serializer()
@@ -272,19 +269,18 @@ serializer::serialize(EObject_ptr obj)
 {
     m_root_obj = obj;
 
-    EClass_ptr cl = obj->eClass();
-    EPackage_ptr pkg = cl->getEPackage();
-
-    ::ecorecpp::mapping::type_traits::string_t const& ns_uri = pkg->getNsURI();
-
     ::ecorecpp::mapping::type_traits::string_t root_name(get_type(obj));
-
-    ::ecorecpp::mapping::type_traits::stringstream_t root_namespace;
-    root_namespace << "xmlns:" << pkg->getName();
-
     m_ser.open_object(root_name);
 
-    m_ser.add_attribute(root_namespace.str(),ns_uri); // root element namespace URI
+    // add namespaces as attribute
+    ::std::set< EPackage_ptr > packages = find_packages(obj);
+	for (::std::set< EPackage_ptr >::iterator it =
+			packages.begin(); it != packages.end(); ++it) {
+	    ::ecorecpp::mapping::type_traits::string_t const& ns_uri = (*it)->getNsURI();
+	    ::ecorecpp::mapping::type_traits::stringstream_t pkg_namespace;
+	    pkg_namespace << "xmlns:" << (*it)->getName();
+	    m_ser.add_attribute(pkg_namespace.str(),ns_uri);
+	}
 
     // common attributes
     // xmlns:xmi="http://www.omg.org/XMI"
@@ -384,3 +380,51 @@ serializer::get_reference(EObject_ptr from, EObject_ptr to) const
 
     return value.str();
 }
+
+::std::set< EPackage_ptr >
+serializer::find_packages(EObject_ptr obj) const {
+	::std::set< EPackage_ptr > result;
+
+	if (obj != 0) {
+		// add package of given object
+	    EClass_ptr cl = obj->eClass();
+	    EPackage_ptr pkg = cl->getEPackage();
+	    result.insert(pkg);
+
+	    // add packages of contained objects
+	    ::ecorecpp::mapping::EList< EReference > const& references =
+				cl->getEAllReferences();
+		for (size_t i = 0; i < references.size(); i++) {
+			EReference_ptr current_ref = references[i];
+			if (current_ref->isContainment() && obj->eIsSet(current_ref)) {
+				ecorecpp::mapping::any any = obj->eGet(current_ref);
+				::std::set< EPackage_ptr > nestedPackages;
+
+				if (current_ref->getUpperBound() != 1) {
+					::ecorecpp::mapping::EList_ptr children =
+							ecorecpp::mapping::any::any_cast<
+									ecorecpp::mapping::EList_ptr >(any);
+					for (size_t j = 0; j < children->size(); j++) {
+						nestedPackages = find_packages(
+								(*children)[j]);
+					}
+				} else {
+					::ecore::EObject_ptr child =
+							ecorecpp::mapping::any::any_cast<
+									::ecore::EObject_ptr >(any);
+					if (child) {
+						nestedPackages = find_packages(child);
+					}
+				}
+
+				for (::std::set< EPackage_ptr >::iterator it =
+						nestedPackages.begin(); it != nestedPackages.end(); ++it) {
+					result.insert(*it);
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
