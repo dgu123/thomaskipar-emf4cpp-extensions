@@ -23,12 +23,15 @@
 #include "../util/debug.hpp"
 #include "../mapping.hpp"
 
+#include <iostream>
+
 using namespace ::ecorecpp::serializer;
 using namespace ::ecore;
 
 serializer::serializer(std::ostream& _ostream) :
      m_out(_ostream), m_level(0), m_ser(m_out)
 {
+	std::cout << " i'm the modified version here" << ::std::endl;
 }
 
 serializer::~serializer()
@@ -352,7 +355,7 @@ serializer::get_reference(EObject_ptr from, EObject_ptr to) const
             EStructuralFeature_ptr esf =
                     to_antecessors.back()->eContainingFeature();
             if (esf->getUpperBound() == 1)
-                value << "/" << esf->getName();
+                value << "/@" << esf->getName();
             else
             {
                 ecorecpp::mapping::any _any = prev->eGet(esf);
