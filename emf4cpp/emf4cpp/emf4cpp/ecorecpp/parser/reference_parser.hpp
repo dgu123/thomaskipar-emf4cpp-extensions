@@ -208,8 +208,8 @@ struct path_item:
                    seq_<
                    	   seq_< char_< '/' >, char_< '@' > >,
                        or_ <
-                           id_,
-                           seq_< id_, char_<'.'>, index_ >
+                           seq_< id_, char_<'.'>, index_ >,
+                           id_
                            >
                        >
                    >
