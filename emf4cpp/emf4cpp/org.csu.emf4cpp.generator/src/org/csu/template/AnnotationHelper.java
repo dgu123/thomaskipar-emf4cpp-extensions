@@ -1,6 +1,7 @@
 package org.csu.template;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -39,6 +40,28 @@ public class AnnotationHelper {
 				if (pKey.equals(entry.getKey())) {
 					list.add(entry.getValue());
 				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Finds all included defined by a given annotation.
+	 * 
+	 * <p>
+	 * Included are defined by the "include" key in an annotation. Multiple
+	 * includes might be seperated by ";".
+	 * </p>
+	 * 
+	 * @param pAnnotation the annotation to find the includes for.
+	 * @return
+	 */
+	public static List<String> findIncludes(EAnnotation pAnnotation) {
+		List<String> list = new ArrayList<String>();
+		if (pAnnotation != null) {
+			List<String> rawIncludes = findDetails(pAnnotation, "include");
+			for (String rawInclude : rawIncludes) {
+				list.addAll(Arrays.asList(rawInclude.split(";")));
 			}
 		}
 		return list;

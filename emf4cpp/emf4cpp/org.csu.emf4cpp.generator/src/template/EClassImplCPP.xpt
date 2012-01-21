@@ -46,12 +46,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <ecorecpp/mapping.hpp>
 
 «REM» Custom annotation defined by annotation«ENDREM»
-«FOREACH this.EOperations AS op»
-	«LET op.EAnnotations.selectFirst(e|e.source == op.annotationSource()) AS annotation»
-		«FOREACH annotation.findDetails("include") AS include»
-			#include "«include»"
-		«ENDFOREACH»«ENDLET»
-«ENDFOREACH»
+«FOREACH this.EOperations AS op-»
+	«LET op.EAnnotations.selectFirst(e|e.source == op.annotationSource()) AS annotation-»
+		«FOREACH annotation.findIncludes() AS include-»
+			#include <«include»>
+		«ENDFOREACH-»
+	«ENDLET-»
+«ENDFOREACH-»
 
 using namespace ::«EPackage.getFQN()»;
 
