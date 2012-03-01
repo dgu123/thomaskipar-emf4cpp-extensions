@@ -14,6 +14,7 @@ public class GeneratorWizard extends Wizard {
 
     private String ecPath = null;
     private String targetDir = null;
+    private boolean generateCMakeFiles = true;
     
     public String getECPath()
     {
@@ -25,11 +26,17 @@ public class GeneratorWizard extends Wizard {
         return targetDir;
     }
     
+    public boolean getGenerateCMakeFiles() 
+    {
+    	return generateCMakeFiles;
+    }
+    
     @Override
     public boolean performFinish() {
         
         ecPath = genParamsPage.getECPath();
         targetDir = genParamsPage.getTargeDir();
+        generateCMakeFiles = genParamsPage.getGenerateCMakeFiles();
         
         return true;
     }

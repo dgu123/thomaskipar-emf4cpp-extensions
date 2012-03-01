@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 «EXTENSION template::FQN»
 
 «DEFINE MainCMake FOR EPackage»
+
+«IF ((Boolean) GLOBALVAR generateCMakeFiles)»
+
 «FILE "CMakeLists.txt" NOOVERWRITE-»
 «EXPAND template::License::LicenseMakefile FOR "CMakeLists.txt"-»
 cmake_minimum_required(VERSION 2.6)
@@ -46,9 +49,11 @@ include(CPack)
 «ENDREM»
 
 «ENDFILE-»
+«ENDIF»
 «ENDDEFINE»
 
 «DEFINE CMake FOR EPackage»
+«IF ((Boolean) GLOBALVAR generateCMakeFiles)»
 «LET getFQN("_") AS fqn»
 «FILE fqn+".cmake"-»
 «EXPAND template::License::LicenseMakefile FOR fqn+".cmake"-»
@@ -95,4 +100,5 @@ install(TARGETS emf4cpp-«fqn» DESTINATION lib)
 
 «ENDFILE»
 «ENDLET»
+«ENDIF»
 «ENDDEFINE»

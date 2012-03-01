@@ -30,7 +30,8 @@ import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel;
 public class Generator {
     private static String templatePath = "template::Main::main";
 
-    public void generate(URI fileURI, String targetDir, String prSrcPaths, String ecPath) {
+	public void generate(URI fileURI, String targetDir, String prSrcPaths,
+			String ecPath, boolean generateCMakeFiles) {
 
         ResourceSet rs = new ResourceSetImpl();
         rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("ecore",
@@ -38,10 +39,12 @@ public class Generator {
         
         Resource resource = rs.getResource(fileURI, true);
 
-        Map<String, Variable> globalVarsMap = new HashMap<String, Variable>();
-        globalVarsMap.put("ecorePath", new Variable("ecorePath", ecPath));
-        globalVarsMap.put("ecoreCppPath", new Variable("ecoreCppPath", ecPath));
-
+		Map<String, Variable> globalVarsMap = new HashMap<String, Variable>();
+		globalVarsMap.put("ecorePath", new Variable("ecorePath", ecPath));
+		globalVarsMap.put("ecoreCppPath", new Variable("ecoreCppPath", ecPath));
+		globalVarsMap.put("generateCMakeFiles", new Variable(
+				"generateCMakeFiles", generateCMakeFiles));
+        
         // Configure outlets
         CppBeautifier cppBeautifier = new CppBeautifier();
         OutputImpl output = new OutputImpl();
@@ -134,7 +137,7 @@ public class Generator {
             System.exit(1);
         }
 
-        new Generator().generate(URI.createFileURI(filePath), targetDir, prSrcPaths, ecPath);
+        new Generator().generate(URI.createFileURI(filePath), targetDir, prSrcPaths, ecPath, true);
     }
 
     private final static Options options = new Options(); // Command line

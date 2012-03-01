@@ -1,5 +1,6 @@
 package org.csu.emf4cpp.plugin.wizard;
 
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -12,6 +13,7 @@ public class GenerationParametersPage extends WizardPage {
 
     private Text ecPath = null;
     private Text targetDir = null; 
+    private Button buttonGenCMakeFiles = null;
     
     protected GenerationParametersPage(String pageName) {
         super(pageName);
@@ -32,6 +34,13 @@ public class GenerationParametersPage extends WizardPage {
         if (targetDir == null)
             return "";
         return targetDir.getText();
+    }
+    
+    public boolean getGenerateCMakeFiles()
+    {
+        if (buttonGenCMakeFiles == null)
+            return true;
+        return buttonGenCMakeFiles.getSelection();
     }
 
     @Override
@@ -97,6 +106,13 @@ public class GenerationParametersPage extends WizardPage {
             }
           }
         });
+        
+        // cmake files
+        
+        new Label(composite, SWT.NONE).setText("Generate CMake Files");
+        buttonGenCMakeFiles = new Button(composite, SWT.CHECK);
+        buttonGenCMakeFiles.setLayoutData(GridDataFactory.swtDefaults().create());
+        new Label(composite, SWT.NONE).setText(""); // dummy
     }
 
 }
