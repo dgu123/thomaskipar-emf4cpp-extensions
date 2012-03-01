@@ -35,6 +35,15 @@ using namespace ::ecore;
 
 /*PROTECTED REGION ID(EObjectImpl.cpp) ENABLED START*/
 
+#ifdef ECORECPP_USE_GC
+#include <stdlib.h>
+void* EObject::operator new( size_t size ) {
+	void* p = malloc(size);
+	::ecorecpp::memory::MemoryManager::_instance()->manage((EObject_ptr) p);
+	return p;
+}
+#endif
+
 void EObject::_setEContainer(::ecore::EObject_ptr _eContainer,
         ::ecore::EStructuralFeature_ptr _eContainingFeature)
 {

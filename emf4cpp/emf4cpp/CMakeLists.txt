@@ -19,6 +19,8 @@
 
 cmake_minimum_required(VERSION 2.6)
 
+option(USE_GC 0)
+
 project(emf4cpp CXX C)
 
 add_subdirectory(emf4cpp)

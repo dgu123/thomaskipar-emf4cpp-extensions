@@ -3,6 +3,10 @@ set(CMAKE_CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops")
 
+if (USE_GC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DECORECPP_USE_GC")
+endif(USE_GC)
+
 set(ecorecpp_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/MetaModelRepository.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/util/print.cpp
@@ -14,6 +18,8 @@ set(ecorecpp_SOURCES
    	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify/Adapter.cpp
    	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify/Notification.cpp
    	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify/Notifier.cpp
+    #gc
+   	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/memory/MemoryManager.cpp
    )
    
 set(ecorecpp_HEADERS
@@ -31,7 +37,8 @@ set(ecorecpp_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/set_traits.hpp		
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/string_traits.hpp		
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/type_traits.hpp		
-	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/MetaModelRepository.hpp		
+	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/MetaModelRepository.hpp
+   	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/memory/MemoryManager.hpp		
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify/Adapter.hpp		
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify_forward.hpp		
 	${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify.hpp		

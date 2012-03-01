@@ -25,6 +25,7 @@
 
 /*PROTECTED REGION ID(EObject_pre) ENABLED START*/
 #include <ecorecpp/notify_forward.hpp>
+#include <ecorecpp/memory/MemoryManager.hpp>
 /*PROTECTED REGION END*/
 
 namespace ecore
@@ -105,6 +106,10 @@ namespace ecore
         virtual ::ecore::EClass_ptr _eClass();
 
         /*PROTECTED REGION ID(EObjectImpl) ENABLED START*/
+
+#ifdef ECORECPP_USE_GC
+        static void* operator new(size_t size);
+#endif
 
         void _setEContainer(::ecore::EObject_ptr _eContainer,
                 ::ecore::EStructuralFeature_ptr _eContainingFeature);
