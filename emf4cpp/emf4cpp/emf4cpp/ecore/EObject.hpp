@@ -107,10 +107,6 @@ namespace ecore
 
         /*PROTECTED REGION ID(EObjectImpl) ENABLED START*/
 
-#ifdef ECORECPP_USE_GC
-        static void* operator new(size_t size);
-#endif
-
         void _setEContainer(::ecore::EObject_ptr _eContainer,
                 ::ecore::EStructuralFeature_ptr _eContainingFeature);
 

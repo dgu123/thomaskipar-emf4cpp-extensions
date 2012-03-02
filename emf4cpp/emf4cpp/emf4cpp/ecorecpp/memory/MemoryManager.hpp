@@ -5,13 +5,14 @@
  *      Author: thomas
  */
 
+//#ifdef ECORECPP_USE_GC
+
 #ifndef MEMORYMANAGER_H_
 #define MEMORYMANAGER_H_
 
-#ifdef ECORECPP_USE_GC
-
 #include <ecore_forward.hpp>
 #include <set>
+#include <map>
 #include <cassert>
 
 namespace ecorecpp
@@ -27,37 +28,40 @@ class managed_ptr;
  */
 class MemoryManager {
 
-private:
+public:
 
-	template <class T>
-	friend class managed_ptr;
+	MemoryManager();
 
-	/** set of all entry points to the managed objects */
-	::std::set< ::ecore::EObject_ptr > entries;
+	/** map of all entry points to the managed objects and their count */
+	::std::map< ::ecore::EObject_ptr, int> entries;
 
-	/** set containing all managed objects */
-	::std::set< ::ecore::EObject_ptr > managedObjects;
+	/** map containing all managed objects and their size */
+	::std::map< ::ecore::EObject_ptr, size_t > managedObjects;
 
 	/** shared instance */
-	static MemoryManager* instance;
+	static MemoryManager* s_instance;
 
-	long long size;
+	size_t totalSize;
 
-	template <class T>
-	void registerEntry(managed_ptr<T>* pPointer) {
+	size_t maxSize;
+
+	void registerEntry(::ecore::EObject_ptr pPointer) {
 		assert(pPointer != 0);
-		assert(pPointer->operator ->() != 0);
-
-		entries.insert(pPointer->operator ->());
-		manage(pPointer->operator ->());
+		int count = 1;
+		if (entries.count(pPointer) > 0) {
+			count = entries[pPointer] + 1;
+		}
+		entries[pPointer] = count;
 	}
 
-	template <class T>
-	void deregisterEntry(managed_ptr<T>* pPointer) {
+	void deregisterEntry(::ecore::EObject_ptr pPointer) {
 		assert(pPointer != 0);
-		assert(pPointer->operator ->() != 0);
-
-		entries.erase(pPointer->operator ->());
+		int count = entries[pPointer];
+		if (count <= 1) {
+			entries.erase(pPointer);
+		} else {
+			entries[pPointer] = count - 1;
+		}
 	}
 
 	bool needsToRunGc();
@@ -74,10 +78,10 @@ public:
 	 * Returns the shared instance of the memory manager.
 	 */
 	static MemoryManager* _instance() {
-		if (!instance) {
-			instance = new MemoryManager();
+		if (!s_instance) {
+			s_instance = new MemoryManager();
 		}
-		return instance;
+		return s_instance;
 	}
 
 	/*
@@ -85,31 +89,44 @@ public:
 	 * the memory manager will take care of releasing the given object when it is not needed
 	 * any more.
 	 */
-	void manage(::ecore::EObject_ptr object);
+	void manage(::ecore::EObject_ptr object, size_t size);
 
 	void gc();
 
 	int getNumObjects() {
 		return managedObjects.size();
 	}
+
+	size_t getSize() {
+		return totalSize;
+	}
 };
 
 template<class T>
 class managed_ptr {
 private:
-	T* pointer;
+	T pointer;
 
 public:
-	managed_ptr(T* pPointer) :
+	managed_ptr(T pPointer) :
 			pointer(pPointer) {
-		MemoryManager::_instance()->registerEntry(this);
+		MemoryManager::_instance()->registerEntry(get());
+	}
+
+	managed_ptr(const managed_ptr<T>& other) :
+			pointer(other.get()) {
+		MemoryManager::_instance()->registerEntry(get());
 	}
 
 	~managed_ptr() {
-		MemoryManager::_instance()->deregisterEntry(this);
+		MemoryManager::_instance()->deregisterEntry(get());
 	}
 
-	T * operator->() const {
+	T operator->() const {
+		return pointer;
+	}
+
+	T get() const {
 		return pointer;
 	}
 };
@@ -117,6 +134,6 @@ public:
 }
 }
 
-#endif /*ECORECPP_USE_GC */
-
 #endif /* MEMORYMANAGER_H_ */
+
+//#endif /*ECORECPP_USE_GC */

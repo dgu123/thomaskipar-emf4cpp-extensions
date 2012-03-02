@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <«EPackage.getFQN("/")»_forward.hpp>
 #include <ecorecpp/mapping_forward.hpp>
+#include <ecorecpp/memory/MemoryManager.hpp>
 
 «FOREACH getNeededPackages() AS pkg-»
 #include <«pkg.getFQN("/")»_forward.hpp>
@@ -65,7 +66,11 @@ public:
 
     // Operations
     «FOREACH this.EOperations AS op»
-    virtual «op.getCPPSignature()»;
+#ifdef ECORECPP_USE_GC
+	virtual «op.getCPPSignatureManagedPtr()»;
+#else
+	virtual «op.getCPPSignature()»;
+#endif
     «ENDFOREACH»
     
     // Attributes

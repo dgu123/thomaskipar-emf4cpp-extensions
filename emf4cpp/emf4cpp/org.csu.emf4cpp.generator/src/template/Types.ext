@@ -124,3 +124,91 @@ String getCPPParameterType(ETypedElement this):
 			getCPPTypeSignature()
 ;
 
+
+// managed_ptr stuff
+
+String getCPPManagedPtr(EClassifier this, String type_paremeters) :
+	if EDataType.isInstance(this) then
+		((EDataType) this).getEDataTypeMap(type_paremeters)
+	else
+		"::ecorecpp::memory::managed_ptr< ::" + this.getFQN("::") + "_ptr>"
+;
+
+String getCPPManagedPtr(EClassifier this) :
+	if EDataType.isInstance(this) then
+		"::" + this.getFQN("::")
+	else
+		"::ecorecpp::memory::managed_ptr< ::" + this.getFQN("::") + "_ptr>"
+;
+
+String getCPPManagedPtr(List[EGenericType] this):
+	if isEmpty then
+		"" // TODO: assert
+	else
+		if size == 1 then
+			" " + first().getCPPManagedPtr()
+		else
+			" " + first().getCPPManagedPtr() + "," + withoutFirst().getCPPManagedPtr()
+;
+
+String getCPPImplManagedPtr(EGenericType this):
+	if this.EClassifier != null then
+		EClassifier.getCPPManagedPtr()
+	else
+		"::ecorecpp::mapping::any"
+;
+
+String getCPPManagedPtr(EGenericType this):
+	if this.ETypeArguments.isEmpty then
+		getCPPImplManagedPtr()
+	else
+		EClassifier.getCPPManagedPtr(ETypeArguments.getCPPManagedPtr())
+;
+
+String getCPPTypeSignatureImplManagedPtr(ETypedElement this):
+	if EGenericType != null then
+		EGenericType.getCPPManagedPtr()
+	else
+		if EType != null then
+			EType.getCPPManagedPtr()
+		else
+			"void"
+;
+
+String getCPPTypeSignatureImplConst(ETypedElement this):
+	getCPPTypeSignatureImplManagedPtr() + " const&"
+;
+
+String getCPPTypeSignatureManagedPtr(ETypedElement this):
+ 	if isMultiple() then
+		"std::vector< " + getCPPTypeSignatureImplManagedPtr() + " >"
+	else
+		getCPPTypeSignatureImplManagedPtr()
+;
+
+String getCPPReturnTypeManagedPtr(ETypedElement this):
+	if isMultiple() || isList() then
+		getCPPTypeSignatureManagedPtr() // + "&"
+	else
+		getCPPTypeSignatureManagedPtr()
+;
+
+// Similar to above, but for the const getter method
+String getCPPReturnTypeConstManagedPtr(ETypedElement this):
+	if isMultiple() || isList() || isComplexType() then
+		getCPPTypeSignatureManagedPtr() + " const&"
+	else
+		getCPPTypeSignatureManagedPtr() // Simple types can be returned by value
+;
+
+
+String getCPPParameterTypeManagedPtr(ETypedElement this):
+	if isList() then
+		getCPPTypeSignatureManagedPtr() + " const&"
+	else
+		if isComplexType() then
+			getCPPTypeSignatureManagedPtr() + " const&"
+		else
+			getCPPTypeSignatureManagedPtr()
+;
+

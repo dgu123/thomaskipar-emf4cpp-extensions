@@ -14,6 +14,7 @@ public class GenerationParametersPage extends WizardPage {
     private Text ecPath = null;
     private Text targetDir = null; 
     private Button buttonGenCMakeFiles = null;
+    private Button buttonUseGc = null;
     
     protected GenerationParametersPage(String pageName) {
         super(pageName);
@@ -43,6 +44,13 @@ public class GenerationParametersPage extends WizardPage {
         return buttonGenCMakeFiles.getSelection();
     }
 
+    public boolean getUseGc()
+    {
+        if (buttonUseGc == null)
+            return true;
+        return buttonUseGc.getSelection();
+    }
+    
     @Override
     public void createControl(Composite parent) {
 
@@ -112,6 +120,14 @@ public class GenerationParametersPage extends WizardPage {
         new Label(composite, SWT.NONE).setText("Generate CMake Files");
         buttonGenCMakeFiles = new Button(composite, SWT.CHECK);
         buttonGenCMakeFiles.setLayoutData(GridDataFactory.swtDefaults().create());
+        new Label(composite, SWT.NONE).setText(""); // dummy
+        
+        // use gc
+        
+        new Label(composite, SWT.NONE).setText("Use GC");
+        buttonUseGc = new Button(composite, SWT.CHECK);
+        buttonUseGc.setLayoutData(GridDataFactory.swtDefaults().create());
+        buttonUseGc.setSelection(true);
         new Label(composite, SWT.NONE).setText(""); // dummy
     }
 

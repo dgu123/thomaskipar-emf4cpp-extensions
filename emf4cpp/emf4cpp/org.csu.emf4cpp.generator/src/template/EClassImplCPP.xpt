@@ -97,7 +97,11 @@ void «name»::_initialize()
 
 // Operations
 «FOREACH this.EOperations AS op»
+#ifdef ECORECPP_USE_GC
+«op.getCPPSignatureManagedPtr(name+"::")»
+#else
 «op.getCPPSignature(name+"::")»
+#endif
 {
 	«IF op.EAnnotations.exists(e|e.source == op.annotationSource())»
 		«LET op.EAnnotations.selectFirst(e|e.source == op.annotationSource()) AS annotation»

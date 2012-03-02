@@ -68,7 +68,8 @@ public class GenerateWithWizard implements IObjectActionDelegate {
             
             Generator generator = new Generator();
             generator.generate(URI.createPlatformResourceURI(fileSelection.getFullPath().toString(), true),
-                    targetDir, targetDir, wizard.getECPath(), wizard.getGenerateCMakeFiles());
+                    targetDir, targetDir, wizard.getECPath(), wizard.getGenerateCMakeFiles(),
+                    wizard.getUseGc());
 
             // Refresh the current project
             project.refreshLocal(IResource.DEPTH_INFINITE, null);

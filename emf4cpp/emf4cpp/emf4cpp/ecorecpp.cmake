@@ -76,6 +76,7 @@ install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/set_traits.hpp DESTIN
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/string_traits.hpp DESTINATION include/emf4cpp/ecorecpp/mapping)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/mapping/type_traits.hpp DESTINATION include/emf4cpp/ecorecpp/mapping)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/MetaModelRepository.hpp DESTINATION include/emf4cpp/ecorecpp)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/memory/MemoryManager.hpp DESTINATION include/emf4cpp/ecorecpp/memory)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify/Adapter.hpp DESTINATION include/emf4cpp/ecorecpp/notify)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify_forward.hpp DESTINATION include/emf4cpp/ecorecpp)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ecorecpp/notify.hpp DESTINATION include/emf4cpp/ecorecpp)

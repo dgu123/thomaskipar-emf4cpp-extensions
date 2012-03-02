@@ -70,6 +70,10 @@ using namespace ::«EPackage.getFQN()»;
 #ifdef ECORECPP_NOTIFICATION_API
     m_eDeliver = false;
 #endif
+
+#ifdef ECORECPP_USE_GC
+	 ::ecorecpp::memory::MemoryManager::_instance()->manage(this, sizeof(*this));
+#endif
 }
 
 «name»::~«name»()

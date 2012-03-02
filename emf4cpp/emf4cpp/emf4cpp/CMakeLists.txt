@@ -19,6 +19,8 @@
 
 FILE(GLOB CMAKES "${CMAKE_CURRENT_SOURCE_DIR}/*.cmake")
 
+option(USE_GC 0)
+
 foreach(cmake ${CMAKES})
   include(${cmake})
 endforeach(cmake)

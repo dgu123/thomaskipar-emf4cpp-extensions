@@ -12,37 +12,48 @@
 
 #include <iostream>
 
-#ifdef ECORECPP_USE_GC
+//#ifdef ECORECPP_USE_GC
 
 using namespace ::ecorecpp::memory;
 
-MemoryManager* MemoryManager::instance = 0;
+MemoryManager* MemoryManager::s_instance = 0;
 
-bool MemoryManager::needsToRunGc() {
-	return true;
+MemoryManager::MemoryManager() {
+	maxSize = 16 * 1024 * 1024;
 }
 
-void MemoryManager::manage(::ecore::EObject_ptr object) {
+bool MemoryManager::needsToRunGc() {
+	return totalSize > maxSize;
+}
+
+void MemoryManager::manage(::ecore::EObject_ptr object, size_t size) {
+	//::std::cout << "manage..." << ::std::endl;
 	assert(object != 0);
 	if (needsToRunGc()) {
 		gc();
 	}
-	managedObjects.insert(object);
-	::std::cout << "manage object: " << sizeof(*object) << ::std::endl;
-	size += sizeof(*object);
-
+	managedObjects.insert(::std::pair< ::ecore::EObject_ptr, size_t >(object, size));
+	totalSize += size;
+	//::std::cout << "did manage!" << ::std::endl;
 }
 
 void MemoryManager::gc() {
+	//::std::cout << "run gc..." << ::std::endl;
+
 	::std::set< ::ecore::EObject_ptr > marked;
 	mark(marked);
 	sweep(marked);
+	if (maxSize < totalSize * 1.5) {
+		maxSize = totalSize * 1.5;
+	}
+
+	//::std::cout << "done run gc!" << ::std::endl;
 }
 
 void MemoryManager::mark(::std::set< ::ecore::EObject_ptr >& pMarkedObjects) {
-	::std::set< ::ecore::EObject_ptr >::iterator it;
+	::std::map< ::ecore::EObject_ptr, int >::iterator it;
 	for (it = entries.begin(); it != entries.end(); ++it) {
-		markRec(pMarkedObjects, *it);
+		markRec(pMarkedObjects, it->first);
 	}
 }
 
@@ -83,16 +94,19 @@ void MemoryManager::markRec(::std::set< ::ecore::EObject_ptr >& pMarkedObjects,
 
 void MemoryManager::sweep(::std::set< ::ecore::EObject_ptr >& pMarkedObjects) {
 	::std::set< ::ecore::EObject_ptr > unmarked;
-	::std::set< ::ecore::EObject_ptr >::iterator it;
+	::std::map< ::ecore::EObject_ptr, size_t >::iterator it;
 	for (it = managedObjects.begin(); it != managedObjects.end(); ++it) {
-		if (!pMarkedObjects.count(*it)) {
-			unmarked.insert(*it);
+		if (!pMarkedObjects.count(it->first)) {
+			unmarked.insert(it->first);
+			totalSize -= it->second;
 		}
 	}
-	for (it = unmarked.begin(); it != unmarked.end(); ++it) {
-		delete *it;
-		managedObjects.erase(*it);
+
+	::std::set< ::ecore::EObject_ptr >::iterator it2;
+	for (it2 = unmarked.begin(); it2 != unmarked.end(); ++it2) {
+		delete *it2;
+		managedObjects.erase(*it2);
 	}
 }
 
-#endif /* ECORECPP_USE_GC */
+//#endif /* ECORECPP_USE_GC */

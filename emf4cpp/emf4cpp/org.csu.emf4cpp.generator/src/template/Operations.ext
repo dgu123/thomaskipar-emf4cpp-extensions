@@ -24,6 +24,11 @@ cached String getCPPParameterSignature(EParameter this) :
 	getCPPParameterType() + " _" + this.name
 ;
 
+cached String getCPPParameterSignatureManagedPtr(EParameter this) : 
+	getCPPParameterTypeManagedPtr() + " _" + this.name
+;
+
+
 String getCPPSignature(List[EParameter] this) :
 	if isEmpty then 
 		""
@@ -34,6 +39,16 @@ String getCPPSignature(List[EParameter] this) :
 			" " + first().getCPPParameterSignature()+ "," + withoutFirst().getCPPSignature()
 ;
 
+String getCPPSignatureMangedPtr(List[EParameter] this) :
+	if isEmpty then 
+		""
+	else
+		if size == 1 then
+			" " + first().getCPPParameterSignatureManagedPtr()
+		else
+			" " + first().getCPPParameterSignatureManagedPtr()+ "," + withoutFirst().getCPPSignatureMangedPtr()
+;
+
 String getCPPSignature(EOperation this, String preffix) :
 	getCPPTypeSignature() + " " + preffix + name + " (" + getCPPSignature(EParameters) + ")"
 ;
@@ -41,6 +56,16 @@ String getCPPSignature(EOperation this, String preffix) :
 String getCPPSignature(EOperation this) : 
 	getCPPSignature("")
 ;
+
+String getCPPSignatureManagedPtr(EOperation this, String preffix) :
+	getCPPTypeSignature() + " " + preffix + name + " (" + getCPPSignatureMangedPtr(EParameters) + ")"
+;
+
+String getCPPSignatureManagedPtr(EOperation this) : 
+	getCPPSignatureManagedPtr("")
+;
+
+
 
 String getIPPFileUniqueName(EOperation this):
 	let ops = EContainingClass.EOperations.select(e|e.name == name):

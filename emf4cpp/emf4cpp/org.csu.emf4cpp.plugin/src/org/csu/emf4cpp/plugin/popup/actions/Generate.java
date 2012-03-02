@@ -55,7 +55,7 @@ public class Generate implements IObjectActionDelegate {
 
             Generator generator = new Generator();
             generator.generate(URI.createPlatformResourceURI(fileSelection.getFullPath().toString(), true),
-                    targetDir, prSrcPaths, null, true);
+                    targetDir, prSrcPaths, null, true, false);
 
             // Refresh the current project
             project.refreshLocal(IResource.DEPTH_INFINITE, null);
