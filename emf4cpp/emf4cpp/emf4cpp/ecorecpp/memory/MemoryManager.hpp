@@ -102,6 +102,8 @@ public:
 	}
 };
 
+
+
 template<class T>
 class managed_ptr {
 private:
@@ -110,16 +112,22 @@ private:
 public:
 	managed_ptr(T pPointer) :
 			pointer(pPointer) {
-		MemoryManager::_instance()->registerEntry(get());
+		if (pointer != 0) {
+			MemoryManager::_instance()->registerEntry(get());
+		}
 	}
 
 	managed_ptr(const managed_ptr<T>& other) :
 			pointer(other.get()) {
-		MemoryManager::_instance()->registerEntry(get());
+		if (pointer != 0) {
+			MemoryManager::_instance()->registerEntry(get());
+		}
 	}
 
 	~managed_ptr() {
-		MemoryManager::_instance()->deregisterEntry(get());
+		if (pointer != 0) {
+			MemoryManager::_instance()->deregisterEntry(get());
+		}
 	}
 
 	T operator->() const {
@@ -129,6 +137,29 @@ public:
 	T get() const {
 		return pointer;
 	}
+
+	operator T() {
+		return pointer;
+	}
+
+	template<class Q>
+	operator managed_ptr<Q>() {
+		managed_ptr<Q> other = managed_ptr<Q>(pointer);
+		return other;
+	}
+
+	managed_ptr<T>& operator=(const managed_ptr<T>& p) {
+		if (pointer != 0) {
+			MemoryManager::_instance()->deregisterEntry(get());
+		}
+		pointer = p.get();
+		if (pointer != 0) {
+			MemoryManager::_instance()->registerEntry(get());
+		}
+		return *this;
+	}
+
+
 };
 
 }

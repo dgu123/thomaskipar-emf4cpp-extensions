@@ -24,6 +24,10 @@
 #include <ecore_forward.hpp>
 #include "out_ptr.hpp"
 #include <ecore/EObject.hpp>
+#ifdef ECORECPP_USE_GC
+#include <ecorecpp/memory/MemoryManager.hpp>
+#endif
+
 
 namespace ecorecpp
 {
@@ -58,6 +62,30 @@ public:
         for (size_t i = 0; i < _q.size(); i++)
             push_back(_q.get(i));
     }
+
+    inline void replace_all(EList& _q)
+    {
+    	clear();
+    	insert_all(_q);
+    }
+
+#ifdef ECORECPP_USE_GC
+    typedef std::vector< ::ecorecpp::memory::managed_ptr<T*> > managed_vector;
+
+    inline void replace_all(managed_vector& _q)
+    {
+    	clear();
+        for (size_t i = 0; i < _q.size(); i++)
+            push_back(_q[i]);
+    }
+
+    inline managed_vector asManagedVector() {
+    	managed_vector v;
+        for (size_t i = 0; i < size(); i++)
+        	v.push_back(get(i));
+    	return v;
+    }
+#endif
 
     virtual void insert_at(size_t _pos, T* _obj) = 0;
 
