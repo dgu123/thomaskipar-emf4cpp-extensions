@@ -68,7 +68,7 @@ using namespace ::«EPackage.getFQN()»;
 «ENDPROTECT»
 
 #ifdef ECORECPP_NOTIFICATION_API
-    m_eDeliver = false;
+    m_eDeliver = true;
 #endif
 
 #ifdef ECORECPP_USE_GC
