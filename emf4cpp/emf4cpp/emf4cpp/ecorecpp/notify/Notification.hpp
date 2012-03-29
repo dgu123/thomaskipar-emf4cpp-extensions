@@ -36,6 +36,7 @@ public:
 
     enum EventType
     {
+    	ADD,
         CREATE,
         SET,
         UNSET,
