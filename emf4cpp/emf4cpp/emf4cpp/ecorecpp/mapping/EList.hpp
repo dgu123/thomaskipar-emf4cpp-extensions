@@ -93,6 +93,8 @@ public:
 
     virtual void push_back(T* _obj) = 0;
 
+    virtual void remove(T* _obj) = 0;
+
     virtual size_t size() const = 0;
 
     virtual void clear() = 0;
@@ -164,6 +166,11 @@ public:
     {
         return m_delegate.clear();
     }
+
+     virtual void remove(T* _obj)
+     {
+    	 m_delegate.remove(_cast< T, Q >::do_cast(_obj));
+     }
 
     virtual ~DelegateEList()
     {

@@ -25,6 +25,7 @@
 #include <vector>
 #include <ecore/EReference.hpp>
 #include <ecorecpp/notify.hpp>
+#include <algorithm>
 
 namespace ecorecpp
 {
@@ -59,6 +60,15 @@ public:
     virtual void clear()
     {
         return m_content.clear();
+    }
+
+    virtual void remove(T* _obj)
+    {
+    	typedef typename ::std::vector<T*>::iterator it_t;
+		it_t it = ::std::find(m_content.begin(), m_content.end(), _obj);
+    	if (it != m_content.end()) {
+    		m_content.erase(it);
+    	}
     }
 
     virtual T* back() {
@@ -107,14 +117,64 @@ public:
     virtual void push_back(T* _obj)
     {
         base_t::m_content.push_back(_obj);
+
+#ifdef ECORECPP_NOTIFICATION_API
+        if (m_this->eNotificationRequired())
+        {
+			::ecorecpp::notify::Notification notification(
+						::ecorecpp::notify::Notification::ADD,
+						(::ecore::EObject_ptr) m_this, m_ref, (ReferenceEListImpl*) 0,
+						this);
+			m_this->eNotify(&notification);
+		}
+#endif
     }
 
-    virtual void clear()
-    {
-        contaiment_t< T, containment >::free_all(base_t::m_content);
+    virtual void remove(T* _obj) {
+		base_t::remove(_obj);
+#ifdef ECORECPP_NOTIFICATION_API
+		if (m_this->eNotificationRequired()) {
+			::ecorecpp::notify::Notification notification(
+					::ecorecpp::notify::Notification::REMOVE,
+					(::ecore::EObject_ptr) m_this, m_ref,
+					(ReferenceEListImpl*) 0, this);
+			m_this->eNotify(&notification);
+		}
+#endif
+	}
 
-        base_t::m_content.clear();
-    }
+    virtual void clear() {
+		contaiment_t<T, containment>::free_all(base_t::m_content);
+
+		base_t::m_content.clear();
+#ifdef ECORECPP_NOTIFICATION_API
+		if (m_this->eNotificationRequired()) {
+			::ecorecpp::notify::Notification notification(
+					::ecorecpp::notify::Notification::REMOVE_MANY,
+					(::ecore::EObject_ptr) m_this, m_ref,
+					(ReferenceEListImpl*) 0, this);
+			m_this->eNotify(&notification);
+		}
+#endif
+	}
+
+
+#ifdef ECORECPP_USE_GC
+	typedef std::vector< ::ecorecpp::memory::managed_ptr<T*> > managed_vector;
+	virtual void replace_all(managed_vector& _q) {
+		EList< T >::replace_all(_q);
+#ifdef ECORECPP_NOTIFICATION_API
+		if (m_this->eNotificationRequired())
+		{
+			::ecorecpp::notify::Notification notification(
+					::ecorecpp::notify::Notification::REMOVE,
+					(::ecore::EObject_ptr) m_this, m_ref, (ReferenceEListImpl*) 0,
+					this);
+			m_this->eNotify(&notification);
+		}
+#endif
+	}
+#endif
 
     virtual ~ReferenceEListImpl()
     {
