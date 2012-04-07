@@ -63,13 +63,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef _«getHeaderDef()»_FORWARD_HPP
 #define _«getHeaderDef()»_FORWARD_HPP
 
-«IF ((Boolean) GLOBALVAR useGc)»
-// Memory management is switched ON
-#ifndef ECORECPP_USE_GC
-#define ECORECPP_USE_GC
-#endif
-«ENDIF»
-
 #include <ecorecpp/mapping_forward.hpp>
 
 «PROTECT CSTART '/*' CEND '*/' ID getFQN("_")+"_forward" DISABLE»

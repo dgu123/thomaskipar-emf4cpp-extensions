@@ -71,9 +71,9 @@ using namespace ::«EPackage.getFQN()»;
     m_eDeliver = true;
 #endif
 
-#ifdef ECORECPP_USE_GC
+«IF ((Boolean) GLOBALVAR useGc)-»
 	 ::ecorecpp::memory::MemoryManager::_instance()->manage(this, sizeof(*this));
-#endif
+«ENDIF-»
 }
 
 «name»::~«name»()

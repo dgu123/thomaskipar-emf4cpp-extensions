@@ -66,11 +66,11 @@ public:
 
     // Operations
     «FOREACH this.EOperations AS op»
-#ifdef ECORECPP_USE_GC
+«IF ((Boolean) GLOBALVAR useGc)»
 	virtual «op.getCPPSignatureManagedPtr()»;
-#else
+«ELSE»
 	virtual «op.getCPPSignature()»;
-#endif
+«ENDIF»
     «ENDFOREACH»
     
     // Attributes
