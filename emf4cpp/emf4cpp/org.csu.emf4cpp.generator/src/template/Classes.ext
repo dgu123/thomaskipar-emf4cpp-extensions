@@ -60,3 +60,6 @@ List[String] getHPPIncludeFiles(EClass this) :
 Set[EPackage] getNeededPackages(EClass this) :
 	this.EAllStructuralFeatures.EType.select(e|e.EPackage != this.EPackage).EPackage.toSet()
 ;
+
+List[String] findOperations(EClass this) 
+	: JAVA org.csu.template.UsingHelper.findOperationNames(org.eclipse.emf.ecore.EClass);

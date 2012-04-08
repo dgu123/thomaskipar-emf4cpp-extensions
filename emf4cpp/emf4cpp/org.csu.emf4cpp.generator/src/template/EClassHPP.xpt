@@ -58,6 +58,13 @@ class «name» «IF !ESuperTypes.isEmpty-»: «FOREACH ESuperTypes AS supertype 
         «ENDIF»«ENDIF»
 {
 public:
+	// using
+	«FOREACH this.ESuperTypes AS superType-»
+		«FOREACH superType.findOperations() AS op-»
+	using ::«superType.getFQN()»::«op»;
+		«ENDFOREACH-»	
+	«ENDFOREACH-»
+
     «name»();
 
     virtual ~«name»();
