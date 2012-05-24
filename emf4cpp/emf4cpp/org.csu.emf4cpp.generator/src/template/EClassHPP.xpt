@@ -59,11 +59,9 @@ class «name» «IF !ESuperTypes.isEmpty-»: «FOREACH ESuperTypes AS supertype 
 {
 public:
 	// using
-	«FOREACH this.ESuperTypes AS superType-»
-		«FOREACH superType.findOperations() AS op-»
-	using ::«superType.getFQN()»::«op»;
-		«ENDFOREACH-»	
-	«ENDFOREACH-»
+	«FOREACH this.findUsingOperations() AS op-»
+	using «op»;
+	«ENDFOREACH-»	
 
     «name»();
 
