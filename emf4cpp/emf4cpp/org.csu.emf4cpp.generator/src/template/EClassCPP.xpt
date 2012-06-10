@@ -78,14 +78,7 @@ using namespace ::«EPackage.getFQN()»;
 
 «name»::~«name»()
 {
-    «FOREACH this.EReferences.select(e|e.containment) AS ref-»
-        «IF ref.upperBound == 1-»
-    if («ref.getMemberName()»)
-    {
-        delete «ref.getMemberName()»;
-    }
-        «ENDIF-»
-    «ENDFOREACH-»
+
 }
 
 «PROTECT CSTART '/*' CEND '*/' ID name+".cpp" DISABLE»
@@ -191,9 +184,6 @@ using namespace ::«EPackage.getFQN()»;
     }
 #endif
 
-    «IF ref.containment-»
-    delete _old_«ref.name»;
-    «ENDIF-»
 }
 
     «ENDIF-»
